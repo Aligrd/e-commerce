@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaAngleLeft, FaSearch, FaHistory, FaHotjar } from "react-icons/fa"
 
 const SearchBar = () => {
@@ -9,15 +9,40 @@ const SearchBar = () => {
 
     const [SearchHistory, setsetSearchHistory] = useState<string[]>(["جادستمالی", "لامپ خودرو", "جاکلیدی", "سطل زباله "]);
 
+    const inputRef = useRef<HTMLInputElement>(null);
+    const searchBarContainer = useRef<HTMLDivElement>(null);
+
+    const openSeachBar = (e: Event) => {
+        setisFocused(true)
+
+    }
+    const closeSearchBar = (e: Event) => {
+        if (isFocused && e.currentTarget && !(searchBarContainer.current as HTMLDivElement).contains(e.target as HTMLElement)) {
+            setisFocused(false)
+        }
+
+    }
+    useEffect(() => {
+        inputRef.current?.addEventListener('focus', openSeachBar)
+        // document.body.addEventListener('click', closeSearchBar)
+
+        return () => {
+            inputRef.current?.removeEventListener('focus', openSeachBar)
+            document.body.addEventListener('click', closeSearchBar)
+        }
+
+    }, [])
 
     //! how to blur background when
-    const inputRef = useRef(null);
     const formRef = useRef(null);
     return (
         <div className='w-full h-full '>
-            <div className="w-full h-full flex items-center justify-center ">
-                {isFocused ? (
-                    <form ref={formRef}>
+            <div className=" w-full h-full flex items-center justify-center ">
+                {!isFocused ? (
+                    <form
+                        className=''
+                        ref={formRef}
+                    >
                         <input
                             ref={inputRef}
                             placeholder="جستجو"
@@ -37,9 +62,10 @@ const SearchBar = () => {
                     </form>
                 )
                     :
-                    (<div className='flex flex-col border border-[1px] border-[#a3a0a0]'>
+                    (<div className=' flex flex-col border border-[1px] border-[#a3a0a0]'>
 
-                        <form ref={formRef}>
+                        <form ref={formRef}
+                            className=''>
                             <input
                                 ref={inputRef}
                                 placeholder="جستجو"
@@ -55,7 +81,7 @@ const SearchBar = () => {
                                 }}
                             />
                         </form>
-                        <div className="absolute top-[4rem] h-[200px] w-[600px] bg-white text-right z-50 rounded-b-lg flex flex-col p-5 gap-5">
+                        <div className="bg-[#efefef] absolute top-[4rem] h-[200px] w-[600px] bg-white text-right z-50 rounded-b-lg flex flex-col p-5 gap-5">
                             <div className="flex flex-col gap-1 ">
                                 <div className='flex flex-row-reverse'>
                                     <FaHistory className='text-2xl' />
@@ -70,8 +96,7 @@ const SearchBar = () => {
                                     ))}
                                 </div>
                             </div>
-
-
+                            
                             <div className="flex flex-col gap-1">
                                 <div className='flex flex-row-reverse'>
                                     <FaHotjar className='text-xl' />

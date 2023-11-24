@@ -3,12 +3,20 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Store } from 'redux';
+import { Provider, useDispatch } from 'react-redux';
+import { store } from './app/store';
+import { fetchUsersThunk } from './app/features/user/userSlice';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+store.dispatch(fetchUsersThunk())
+
+
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <App />
+  <Provider store={store} >
+    <App />
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

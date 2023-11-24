@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import SingleProduct from './SingleProduct'
 import { TProduct } from '../Context/Product'
 import axios from 'axios'
+
+//! components
+import SingleProduct from './SingleProduct'
+import PostList from '../app/features/post/PostList'
+import PostForm from '../app/features/post/PostForm'
+import NewProduct from '../app/features/product/NewProduct'
+
 
 const Products = () => {
 
@@ -9,13 +15,14 @@ const Products = () => {
     const [loading, setLoading] = useState(true)
     const [Products, setProduct] = useState<Array<TProduct>>([])
 
+    //! pagination
     const [pageProducts, setPageProducts] = useState<TProduct[]>([])
-
     const [currentPageIndex, setCurrentPageIndex] = useState<number>(1);
-
     const [pageCount, setPageCount] = useState<Number>(0)
-
     const pageNavNumber = [...Array(pageCount).keys()];
+
+    //! redux 
+
 
     useEffect(() => {
         axios.get("https://fakestoreapi.com/products")
@@ -26,20 +33,23 @@ const Products = () => {
                 setPageProducts(data.slice((currentPageIndex - 1) * contentPerPage, ((currentPageIndex) * contentPerPage)));
                 console.log(data)
                 setLoading(false)
-
             })
     }, [])
-
-    useEffect(() => {
-        navigateToPage()
-    }, [currentPageIndex])
 
     const navigateToPage = () => {
         setPageProducts(Products.slice((currentPageIndex - 1) * contentPerPage, ((currentPageIndex) * contentPerPage)));
     }
-    console.log(pageProducts)
+
+    useEffect(() => {
+
+        navigateToPage()
+
+    }, [currentPageIndex])
+
     return (
+
         <div className=' w-full h-full'>
+            <NewProduct />
             {!loading ?
                 (<>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-5 w-full h-full gap-y-10">
@@ -51,11 +61,10 @@ const Products = () => {
                             key={pageNumber}
                             onClick={() => {
                                 setCurrentPageIndex(pageNumber + 1)
-                            }}
-                        >{pageNumber}</button>)}
-                    </div></>) :
-                (<div className='h-full w-full flex justify-center items-center'>Loading...</div>
-                )
+                            }}>{pageNumber}</button>)}
+                    </div>
+                </>) :
+                (<div className='h-full w-full flex justify-center items-center'>Loading...</div>)
             }
         </div>
     )
